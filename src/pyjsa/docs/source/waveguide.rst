@@ -1,4 +1,4 @@
 Waveguide
 =========
-.. automodule:: pyjsa.waveguide
+.. automodule:: waveguide
     :members:
