@@ -1,0 +1,37 @@
+﻿pyjsa.waveguide
+===============
+
+.. automodule:: pyjsa.waveguide
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      find_poling_profile
+      find_poling_profile_subdomain
+      pmf_gaussian
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Waveguide
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,43 @@
+\indexentry{module@\spxentry{module}!pyjsa.waveguide@\spxentry{pyjsa.waveguide}|hyperpage}{1}
+\indexentry{pyjsa.waveguide@\spxentry{pyjsa.waveguide}!module@\spxentry{module}|hyperpage}{1}
+\indexentry{Waveguide (class in pyjsa.waveguide)@\spxentry{Waveguide}\spxextra{class in pyjsa.waveguide}|hyperpage}{1}
+\indexentry{GAUSSIAN\_POLED (pyjsa.waveguide.Waveguide attribute)@\spxentry{GAUSSIAN\_POLED}\spxextra{pyjsa.waveguide.Waveguide attribute}|hyperpage}{1}
+\indexentry{GAUSSIAN (pyjsa.waveguide.Waveguide attribute)@\spxentry{GAUSSIAN}\spxextra{pyjsa.waveguide.Waveguide attribute}|hyperpage}{1}
+\indexentry{REGULAR\_POLED (pyjsa.waveguide.Waveguide attribute)@\spxentry{REGULAR\_POLED}\spxextra{pyjsa.waveguide.Waveguide attribute}|hyperpage}{1}
+\indexentry{CUSTOM\_POLED (pyjsa.waveguide.Waveguide attribute)@\spxentry{CUSTOM\_POLED}\spxextra{pyjsa.waveguide.Waveguide attribute}|hyperpage}{1}
+\indexentry{CUSTOM (pyjsa.waveguide.Waveguide attribute)@\spxentry{CUSTOM}\spxextra{pyjsa.waveguide.Waveguide attribute}|hyperpage}{1}
+\indexentry{custom\_\_poling\_profile (pyjsa.waveguide.Waveguide property)@\spxentry{custom\_\_poling\_profile}\spxextra{pyjsa.waveguide.Waveguide property}|hyperpage}{2}
+\indexentry{custom\_nonlinearity\_profile (pyjsa.waveguide.Waveguide property)@\spxentry{custom\_nonlinearity\_profile}\spxextra{pyjsa.waveguide.Waveguide property}|hyperpage}{2}
+\indexentry{custom\_poling\_profile (pyjsa.waveguide.Waveguide property)@\spxentry{custom\_poling\_profile}\spxextra{pyjsa.waveguide.Waveguide property}|hyperpage}{2}
+\indexentry{g() (pyjsa.waveguide.Waveguide method)@\spxentry{g()}\spxextra{pyjsa.waveguide.Waveguide method}|hyperpage}{2}
+\indexentry{length (pyjsa.waveguide.Waveguide property)@\spxentry{length}\spxextra{pyjsa.waveguide.Waveguide property}|hyperpage}{2}
+\indexentry{neff\_TE (pyjsa.waveguide.Waveguide property)@\spxentry{neff\_TE}\spxextra{pyjsa.waveguide.Waveguide property}|hyperpage}{2}
+\indexentry{neff\_TM (pyjsa.waveguide.Waveguide property)@\spxentry{neff\_TM}\spxextra{pyjsa.waveguide.Waveguide property}|hyperpage}{2}
+\indexentry{profile (pyjsa.waveguide.Waveguide property)@\spxentry{profile}\spxextra{pyjsa.waveguide.Waveguide property}|hyperpage}{2}
+\indexentry{find\_poling\_profile() (in module pyjsa.waveguide)@\spxentry{find\_poling\_profile()}\spxextra{in module pyjsa.waveguide}|hyperpage}{3}
+\indexentry{pmf\_gaussian() (in module pyjsa.waveguide)@\spxentry{pmf\_gaussian()}\spxextra{in module pyjsa.waveguide}|hyperpage}{3}
+\indexentry{module@\spxentry{module}!pyjsa.pump@\spxentry{pyjsa.pump}|hyperpage}{5}
+\indexentry{pyjsa.pump@\spxentry{pyjsa.pump}!module@\spxentry{module}|hyperpage}{5}
+\indexentry{Pump (class in pyjsa.pump)@\spxentry{Pump}\spxextra{class in pyjsa.pump}|hyperpage}{5}
+\indexentry{center (pyjsa.pump.Pump property)@\spxentry{center}\spxextra{pyjsa.pump.Pump property}|hyperpage}{5}
+\indexentry{hermite\_mode() (pyjsa.pump.Pump method)@\spxentry{hermite\_mode()}\spxextra{pyjsa.pump.Pump method}|hyperpage}{5}
+\indexentry{idler (pyjsa.pump.Pump property)@\spxentry{idler}\spxextra{pyjsa.pump.Pump property}|hyperpage}{5}
+\indexentry{points (pyjsa.pump.Pump property)@\spxentry{points}\spxextra{pyjsa.pump.Pump property}|hyperpage}{5}
+\indexentry{pump\_envelope\_function() (pyjsa.pump.Pump method)@\spxentry{pump\_envelope\_function()}\spxextra{pyjsa.pump.Pump method}|hyperpage}{5}
+\indexentry{signal (pyjsa.pump.Pump property)@\spxentry{signal}\spxextra{pyjsa.pump.Pump property}|hyperpage}{6}
+\indexentry{signal\_idler\_ranges() (pyjsa.pump.Pump method)@\spxentry{signal\_idler\_ranges()}\spxextra{pyjsa.pump.Pump method}|hyperpage}{6}
+\indexentry{width (pyjsa.pump.Pump property)@\spxentry{width}\spxextra{pyjsa.pump.Pump property}|hyperpage}{6}
+\indexentry{module@\spxentry{module}!pyjsa.experiment@\spxentry{pyjsa.experiment}|hyperpage}{7}
+\indexentry{pyjsa.experiment@\spxentry{pyjsa.experiment}!module@\spxentry{module}|hyperpage}{7}
+\indexentry{Experiment (class in pyjsa.experiment)@\spxentry{Experiment}\spxextra{class in pyjsa.experiment}|hyperpage}{7}
+\indexentry{SPDC\_type (pyjsa.experiment.Experiment property)@\spxentry{SPDC\_type}\spxextra{pyjsa.experiment.Experiment property}|hyperpage}{7}
+\indexentry{delta\_k (pyjsa.experiment.Experiment property)@\spxentry{delta\_k}\spxextra{pyjsa.experiment.Experiment property}|hyperpage}{7}
+\indexentry{joint\_spectral\_amplitude() (pyjsa.experiment.Experiment method)@\spxentry{joint\_spectral\_amplitude()}\spxextra{pyjsa.experiment.Experiment method}|hyperpage}{7}
+\indexentry{phase\_matching\_function() (pyjsa.experiment.Experiment method)@\spxentry{phase\_matching\_function()}\spxextra{pyjsa.experiment.Experiment method}|hyperpage}{7}
+\indexentry{pmf (pyjsa.experiment.Experiment property)@\spxentry{pmf}\spxextra{pyjsa.experiment.Experiment property}|hyperpage}{8}
+\indexentry{poling\_period (pyjsa.experiment.Experiment property)@\spxentry{poling\_period}\spxextra{pyjsa.experiment.Experiment property}|hyperpage}{8}
+\indexentry{pump (pyjsa.experiment.Experiment property)@\spxentry{pump}\spxextra{pyjsa.experiment.Experiment property}|hyperpage}{8}
+\indexentry{schmidt\_decomposition() (pyjsa.experiment.Experiment method)@\spxentry{schmidt\_decomposition()}\spxextra{pyjsa.experiment.Experiment method}|hyperpage}{8}
+\indexentry{waveguide (pyjsa.experiment.Experiment property)@\spxentry{waveguide}\spxextra{pyjsa.experiment.Experiment property}|hyperpage}{8}
+\indexentry{find\_optimal\_pump\_width() (in module pyjsa.experiment)@\spxentry{find\_optimal\_pump\_width()}\spxextra{in module pyjsa.experiment}|hyperpage}{8}
+\indexentry{rect() (in module pyjsa.experiment)@\spxentry{rect()}\spxextra{in module pyjsa.experiment}|hyperpage}{9}

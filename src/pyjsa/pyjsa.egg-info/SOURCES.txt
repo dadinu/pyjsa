@@ -1,0 +1,9 @@
+LICENSE.rst
+README.rst
+setup.cfg
+setup.py
+src/pyjsa.egg-info/PKG-INFO
+src/pyjsa.egg-info/SOURCES.txt
+src/pyjsa.egg-info/dependency_links.txt
+src/pyjsa.egg-info/requires.txt
+src/pyjsa.egg-info/top_level.txt
