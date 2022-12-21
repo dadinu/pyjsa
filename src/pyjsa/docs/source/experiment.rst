@@ -1,4 +1,4 @@
 Experiment
 ==========
-.. automodule:: experiment
+.. automodule:: pyjsa.experiment
     :members:

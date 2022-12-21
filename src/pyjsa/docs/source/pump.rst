@@ -1,5 +1,5 @@
 Pump
 ====
 
-.. automodule:: pump
+.. automodule:: pyjsa.pump
     :members:
