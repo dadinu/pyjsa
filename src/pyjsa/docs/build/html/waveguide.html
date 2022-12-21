@@ -14,7 +14,6 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -69,11 +68,11 @@
            <div itemprop="articleBody">
              
   <section id="module-pyjsa.waveguide">
-<span id="waveguide"></span><h1>Waveguide<a class="headerlink" href="#module-pyjsa.waveguide" title="Permalink to this heading"></a></h1>
+<span id="waveguide"></span><h1>Waveguide<a class="headerlink" href="#module-pyjsa.waveguide" title="Permalink to this headline"></a></h1>
 <p>The Waveguide package, containing tools for manipulating and and constructing waveguide geometry and physical data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyjsa.waveguide.Waveguide">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyjsa.waveguide.</span></span><span class="sig-name descname"><span class="pre">Waveguide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">film_thickness_um</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cladding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'air'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_poling_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_nonlinearity_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyjsa.waveguide.Waveguide" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyjsa.waveguide.</span></span><span class="sig-name descname"><span class="pre">Waveguide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">film_thickness_um</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_idx</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_idx</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wg_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cladding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'air'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_poling_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_nonlinearity_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyjsa.waveguide.Waveguide" title="Permalink to this definition"></a></dt>
 <dd><p>Implements a Waveguide object, which stores information relevant for the LNOI waveguide construction and material properties. The properties of the waveguide like the dispersion relation are stored externally in .npz files in the folder “..data&quot;.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyjsa.waveguide.Waveguide.GAUSSIAN_POLED">
@@ -146,19 +145,8 @@
 </dd>
 </dl>
 <dl class="py property">
-<dt class="sig sig-object py" id="pyjsa.waveguide.Waveguide.custom__poling_profile">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">custom__poling_profile</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.custom__poling_profile" title="Permalink to this definition"></a></dt>
-<dd><p>A custom poling profile for the waveguide.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.waveguide.Waveguide.custom_nonlinearity_profile">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">custom_nonlinearity_profile</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.custom_nonlinearity_profile" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">custom_nonlinearity_profile</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.custom_nonlinearity_profile" title="Permalink to this definition"></a></dt>
 <dd><p>A custom nonlinearity profile for the waveguide.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -169,7 +157,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.waveguide.Waveguide.custom_poling_profile">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">custom_poling_profile</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.custom_poling_profile" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">custom_poling_profile</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.custom_poling_profile" title="Permalink to this definition"></a></dt>
 <dd><p>A custom poling profile for the waveguide.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -197,7 +185,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.waveguide.Waveguide.length">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">length</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.length" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">length</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.length" title="Permalink to this definition"></a></dt>
 <dd><p>Length of the waveguide.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -208,7 +196,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.waveguide.Waveguide.neff_TE">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neff_TE</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.neff_TE" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">neff_TE</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.neff_TE" title="Permalink to this definition"></a></dt>
 <dd><p>Dispersion relation for TE polarization, of the form neff_TE(wavelength in micrometers).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -219,7 +207,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.waveguide.Waveguide.neff_TM">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neff_TM</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.neff_TM" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">neff_TM</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.neff_TM" title="Permalink to this definition"></a></dt>
 <dd><p>Dispersion relation for TM polarization, of the form neff_TM(wavelength in micrometers).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -230,7 +218,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.waveguide.Waveguide.profile">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">profile</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.profile" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">profile</span></span><a class="headerlink" href="#pyjsa.waveguide.Waveguide.profile" title="Permalink to this definition"></a></dt>
 <dd><p>Profile of the waveguide.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>

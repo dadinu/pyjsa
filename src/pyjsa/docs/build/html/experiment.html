@@ -14,7 +14,6 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -69,11 +68,11 @@
            <div itemprop="articleBody">
              
   <section id="module-pyjsa.experiment">
-<span id="experiment"></span><h1>Experiment<a class="headerlink" href="#module-pyjsa.experiment" title="Permalink to this heading"></a></h1>
+<span id="experiment"></span><h1>Experiment<a class="headerlink" href="#module-pyjsa.experiment" title="Permalink to this headline"></a></h1>
 <p>This module is the core of the package. It contains classes and functions that aid in the computation of the PMF, JSA, Schmidt decompostion and in the optimization of the output photon spectral purity.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyjsa.experiment.Experiment">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyjsa.experiment.</span></span><span class="sig-name descname"><span class="pre">Experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveguide</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="waveguide.html#pyjsa.waveguide.Waveguide" title="pyjsa.waveguide.Waveguide"><span class="pre">Waveguide</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pump</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pump.html#pyjsa.pump.Pump" title="pyjsa.pump.Pump"><span class="pre">Pump</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SPDC_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyjsa.experiment.Experiment" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyjsa.experiment.</span></span><span class="sig-name descname"><span class="pre">Experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveguide</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="waveguide.html#pyjsa.waveguide.Waveguide" title="pyjsa.waveguide.Waveguide"><span class="pre">pyjsa.waveguide.Waveguide</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pump</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="pump.html#pyjsa.pump.Pump" title="pyjsa.pump.Pump"><span class="pre">pyjsa.pump.Pump</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SPDC_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyjsa.experiment.Experiment" title="Permalink to this definition"></a></dt>
 <dd><p>The experiment class incorporates the tools for computing the PMF, JSA, Schmidt decomposition and heralding efficiencies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -88,7 +87,7 @@
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.experiment.Experiment.SPDC_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SPDC_type</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.SPDC_type" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">SPDC_type</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.SPDC_type" title="Permalink to this definition"></a></dt>
 <dd><p>The SPDC type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -99,7 +98,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.experiment.Experiment.delta_k">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delta_k</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.delta_k" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">delta_k</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.delta_k" title="Permalink to this definition"></a></dt>
 <dd><p>The phase mismatch along the <span class="math notranslate nohighlight">\(\lambda_i-\lambda_s\)</span> plane. Cannot be set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -122,10 +121,13 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The JSA.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>numpy.ndarray</em> – The JSA.</p></li>
+<li><p><em>float</em> – Probability that the signal passes its filter.</p></li>
+<li><p><em>float</em> – Probability that the idler passes its filter.</p></li>
+<li><p><em>float</em> – Probability that both the signal and the idler pass their filters.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -149,7 +151,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.experiment.Experiment.pmf">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pmf</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.pmf" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">pmf</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.pmf" title="Permalink to this definition"></a></dt>
 <dd><p>The PMF. If it is None, it will be computed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -160,7 +162,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.experiment.Experiment.poling_period">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">poling_period</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.poling_period" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">poling_period</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.poling_period" title="Permalink to this definition"></a></dt>
 <dd><p>The poling period for the specified process, signal and idler combination. Cannot be set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -171,7 +173,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.experiment.Experiment.pump">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pump</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.pump" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">pump</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.pump" title="Permalink to this definition"></a></dt>
 <dd><p>The pump in the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -205,7 +207,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyjsa.experiment.Experiment.waveguide">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">waveguide</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.waveguide" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">waveguide</span></span><a class="headerlink" href="#pyjsa.experiment.Experiment.waveguide" title="Permalink to this definition"></a></dt>
 <dd><p>The waveguide in the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -218,7 +220,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyjsa.experiment.find_optimal_pump_width">
-<span class="sig-prename descclassname"><span class="pre">pyjsa.experiment.</span></span><span class="sig-name descname"><span class="pre">find_optimal_pump_width</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyjsa.experiment.Experiment" title="pyjsa.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_signal_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_idler_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_signal_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_idler_center</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyjsa.experiment.find_optimal_pump_width" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyjsa.experiment.</span></span><span class="sig-name descname"><span class="pre">find_optimal_pump_width</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyjsa.experiment.Experiment" title="pyjsa.experiment.Experiment"><span class="pre">pyjsa.experiment.Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">width_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_signal_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_idler_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_signal_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_idler_center</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyjsa.experiment.find_optimal_pump_width" title="Permalink to this definition"></a></dt>
 <dd><p>A function that optimizes the width of the pump of an experiment such that it yields the highest spectral purity. It uses the default optimizer of scipy.optimize.minimize_scalar.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

@@ -185,11 +185,9 @@ class Experiment():
             PMF = PMF/(1j*self.delta_k)*(np.exp(1j*self.delta_k*_dz)-1)
             
         elif self.waveguide.profile == Waveguide.GAUSSIAN:
-            print("Computing integrated pmf")
             PMF = _gaussian_pmf(self.waveguide.length, self.delta_k, self.waveguide.length/4, self.poling_period)
             
         elif self.waveguide.profile == Waveguide.CUSTOM:
-            print("second pmf")
             _z, _dz = np.linspace(0, self._waveguide.length, points, retstep=True, endpoint=False)
             PMF = np.zeros((self.pump.points, self.pump.points), dtype=np.complex64)
 
