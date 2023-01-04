@@ -1,7 +1,5 @@
 .. image:: https://readthedocs.org/projects/pyjsa/badge/?version=latest
     :target: https://pyjsa.readthedocs.io/en/latest/?badge=latest
-    :old: Documentation Status
- 
 PyJSA
 =====
 A python package for the simulation of the joint spectral amplitude of output photons from an SPDC source buit in a PPLN ridge waveguide.
