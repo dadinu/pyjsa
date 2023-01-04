@@ -15,6 +15,8 @@ setup(
     install_requires=[
           'numpy',
           'scipy',
+          'tqdm',
+          'PyQt5',
           'pyqtgraph'
       ],
 
