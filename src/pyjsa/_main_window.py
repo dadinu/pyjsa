@@ -131,8 +131,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.reset_filters()
         #waveguide variables
         thickness = self.waveguide_params_top.children()[0].value()
-        width = int(self.waveguide_params_top.children()[1].value()/0.1) - 2
-        height = int(self.waveguide_params_top.children()[2].value()/0.1) - 2
+        width = int(np.around(np.around(self.waveguide_params_top.children()[1].value(), 1)/0.1, 0)) - 5
+        height = int(np.around(np.around(self.waveguide_params_top.children()[2].value(), 1)/0.1, 0)) - 2
         length = self.waveguide_params_top.children()[3].value()*1e-3
         profile = self.profiles_array.index(self.waveguide_params_top.children()[4].value())
         
