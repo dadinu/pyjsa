@@ -60,12 +60,13 @@ class Experiment():
         The type of the SPDC process. Can only be 0, 1 or 2, by default 0.
     """
     
-    def __init__(self, waveguide:Waveguide, pump:Pump, signal, idler, SPDC_type = 0) -> None:
+    def __init__(self, waveguide:Waveguide, pump:Pump, signal, idler, SPDC_type = 0, pmf_callback = None) -> None:
         self._waveguide = waveguide
         self._pump = pump
         self._pmf = None
         self._poling_period = None
         self._delta_k = None
+        self._pmf_callback = pmf_callback
         
         self._pump.signal = signal
         self._pump.idler = idler
@@ -140,10 +141,18 @@ class Experiment():
         """int: The SPDC type.
         """
         return self._SPDC_type
-    
+        
     @SPDC_type.setter
     def SPDC_type(self, this_SPDC_type):
         self._SPDC_type = this_SPDC_type
+        
+    @property
+    def pmf_callback(self):
+        return self._pmf_callback
+    
+    @pmf_callback.setter
+    def pmf_callback(self, value):
+        self._pmf_callback = value
         
     def phase_matching_function(self, points = 10000):
         """A function that computed the PMF for the specified signal, idler ranges and waveguide poling profile.
@@ -163,9 +172,13 @@ class Experiment():
             _dz = self.poling_period/2
             _w = np.exp(1j*(self.delta_k)*_dz)
             _factor = 1
-            for gm in tqdm(self.waveguide.g(self.poling_period)):
+            _index = 0
+            _iter = tqdm(self.waveguide.g(self.poling_period))
+            for gm in _iter:
                 PMF += gm*_factor
                 _factor = _factor*_w
+                _index += 1
+                if self.pmf_callback != None: self.pmf_callback(int((_iter.n+1)/_iter.total*100))
                 
             PMF = PMF/(1j*self.delta_k)*(np.exp(1j*self.delta_k*_dz)-1)
             
