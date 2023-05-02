@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import*
 from PyQt5.QtCore import Qt, QRunnable, QThreadPool, pyqtSignal, QObject
 import sys
 from pyjsa.assets.ui.Ui_main_window_graph import Ui_MainWindow_graph
+from pyjsa._two_photon_selector_dialog import TwoPhotonSelectorDialog
 from pyjsa.waveguide import Waveguide
 from pyjsa.pump import Pump
 from pyjsa.experiment import Experiment, find_optimal_pump_width
@@ -43,6 +44,8 @@ class MainWindow(Ui_MainWindow_graph, QMainWindow):
         self.waveguide_params_top.children()[4].sigStateChanged.connect(self.plot_waveguide_profile)
         self.actionSave_As.triggered.connect(self.save_config_as)
         self.actionOpen.triggered.connect(self.open_config)
+        
+        self.actionTwo_photon_selector.triggered.connect(self.open_two_photon_selector)
         
     def process_result(self, result):
         self.pef = result[0]
@@ -454,3 +457,10 @@ class MainWindow(Ui_MainWindow_graph, QMainWindow):
             }
             with open(path, 'w') as configfile:
                 config.write(configfile)
+                
+    def open_two_photon_selector(self):
+        self.two_photon_selector_dialog = QDialog()
+        self.Ui_twophotonselectordialog = TwoPhotonSelectorDialog()
+        self.Ui_twophotonselectordialog.setupUi(self.two_photon_selector_dialog)
+        self.two_photon_selector_dialog.exec()
+        pass
