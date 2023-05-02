@@ -2,11 +2,12 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import*
 from PyQt5.QtCore import Qt, QRunnable, QThreadPool, pyqtSignal, QObject
 import sys
-from pyjsa.assets.ui.Ui_main_window import Ui_MainWindow
-from pyqtgraph.parametertree import Parameter
+from pyjsa.assets.ui.Ui_main_window_graph import Ui_MainWindow_graph
+from pyjsa._two_photon_selector_dialog import TwoPhotonSelectorDialog
 from pyjsa.waveguide import Waveguide
 from pyjsa.pump import Pump
 from pyjsa.experiment import Experiment, find_optimal_pump_width
+from pyjsa._workers import WorkerExperiment
 import pyqtgraph as pqg
 import numpy as np
 from configparser import ConfigParser
@@ -14,143 +15,9 @@ import traceback
 
 pqg.setConfigOptions(imageAxisOrder = 'row-major')
 
-class WorkerSignals(QObject):
-    finished = pyqtSignal()
-    error = pyqtSignal(tuple)
-    result = pyqtSignal(object)
-    progress = pyqtSignal(int)
-        
-class Worker(QRunnable):
-    def __init__(self, experiment: Experiment, filter_signal_width, filter_signal_center, filter_idler_width, filter_idler_center, callback = None) -> None:
-        super(Worker, self).__init__()
-        self.experiment = experiment
-        self.filter_signal_width = filter_signal_width
-        self.filter_signal_center = filter_signal_center
-        self.filter_idler_width = filter_idler_width
-        self.filter_idler_center = filter_idler_center
-        self.callback = callback
-        self.signals = WorkerSignals()
-    
-    def run(self) -> None:
-        try:
-            self.experiment.pmf_callback = self.pmf_callback
-            pef = self.experiment.pump.pump_envelope_function()
-            pmf = self.experiment.pmf
-            jsa, signal_passes, idler_passes, both_pass = self.experiment.joint_spectral_amplitude(filter_signal_width=self.filter_signal_width, filter_signal_center=self.filter_signal_center,
-                                                                                                        filter_idler_center=self.filter_idler_center, filter_idler_width=self.filter_idler_width)
-            s_values, purity = self.experiment.schmidt_decomposition(filter_signal_width=self.filter_signal_width, filter_signal_center=self.filter_signal_center,
-                                                                    filter_idler_center=self.filter_idler_center, filter_idler_width=self.filter_idler_width)
-            result = (pef, pmf, jsa, signal_passes, idler_passes, both_pass, s_values, purity)
-        except:
-            traceback.print_exc()
-            exctype, value = sys.exc_info()[:2]
-            self.signals.error.emit((exctype, value, traceback.format_exc()))
-        else:
-            self.signals.result.emit(result)  # Return the result of the processing
-        finally:
-            self.signals.finished.emit()  # Done
-            
-    def pmf_callback(self, p):
-        self.signals.progress.emit(p)
-
-
-class MainWindow(Ui_MainWindow, QMainWindow):
+class MainWindow(Ui_MainWindow_graph, QMainWindow):
     def setupUi(self, Window: QMainWindow):
         super().setupUi(Window)
-        
-        #
-        # Class variables
-        #
-        self.profiles_array = ["Gaussian Poled", "Gaussian", "Regular Poled"]
-        self.waveguide = None
-        self.pump = None
-        self.experiment = None
-        self.pef = None
-        
-        #
-        # Add toolbar widget for process params.
-        #
-        self.process_type = QSpinBox()
-        self.process_type.setPrefix("SPDC type: ")
-        self.process_type.setValue(2)
-        self.process_type.setMaximum(2)
-        
-        self.signal_edit = QDoubleSpinBox()
-        self.signal_edit.setPrefix("Signal: ")
-        self.signal_edit.setSuffix(" nm")
-        self.signal_edit.setMaximum(2000.0)
-        self.signal_edit.setValue(1550.0)
-        
-        self.idler_edit = QDoubleSpinBox()
-        self.idler_edit.setPrefix("Idler: ")
-        self.idler_edit.setMaximum(2000.0)
-        self.idler_edit.setValue(1550.0)
-        self.idler_edit.setSuffix(" nm")
-        
-        self.toolBar.addWidget(self.process_type)
-        self.toolBar.addWidget(self.signal_edit)
-        self.toolBar.addWidget(self.idler_edit)
-        
-        self.progress = QProgressBar()
-        self.statusBar().addWidget(self.progress)
-        self.progress.setInvertedAppearance(True)
-        self.progress.setFixedWidth(300)
-        self.progress.setStyleSheet("border-style: solid; border-color: grey; border-radius: 7px; border-width: 2px; text-align: center;")
-        self.progress.setVisible(False)
-        self.progress.setValue(0)
-        
-        #
-        # Parameters for pump.
-        #
-        pump_params = [
-            {'name': 'Center', 'type': 'float', 'value': 1/(1/self.idler_edit.value()+1/self.signal_edit.value()), 'readonly': True, 'suffix': 'nm'},
-            {'name': 'Bandwidth', 'type': 'float', 'value': 1.75, 'suffix': 'nm'}
-        ]
-        self.pump_params_top = Parameter.create(name='pump_params', type = 'group', children = pump_params)
-        self.pump_parameters_tree.setParameters(self.pump_params_top, showTop=False)
-        
-        #
-        # Parameters for waveguide.
-        #
-        waveguide_params = [
-            {'name': 'Film thickness', 'type': 'float', 'value': 0.7, 'limits': [0.3,0.8], 'step':0.1, 'suffix': 'μm'},
-            {'name': 'Width', 'type': 'float', 'value': 1.2, 'limits': [0.5,2], 'step':0.1, 'suffix': 'μm'},
-            {'name': 'Height', 'type': 'float', 'value': 0.3, 'limits': [0.2,0.6], 'step':0.1, 'suffix': 'μm'},
-            {'name': 'Length', 'type': 'float', 'value': 5, 'limits': [0.0,20.0], 'step':1, 'suffix': 'mm'},
-            {'name': 'Profile', 'type': 'list', 'values': self.profiles_array, 'value': self.profiles_array[2]}
-        ]
-        self.waveguide_params_top = Parameter.create(name = 'waveguide_params', type = 'group', children = waveguide_params)
-        self.waveguide_tree.setParameters(self.waveguide_params_top, showTop=False)
-        
-        #
-        # Parameters for filters
-        #
-        filters_params = [
-            {'name': 'Signal center', 'type': 'float', 'value': 1550, 'limits': [200,2000], 'step':1, 'suffix': 'nm'},
-            {'name': 'Signal width', 'type': 'float', 'value': 20, 'limits': [1,20], 'step':0.1, 'suffix': 'nm'},
-            {'name': 'Idler center', 'type': 'float', 'value': 1550, 'limits': [200, 2000], 'step':1, 'suffix': 'nm'},
-            {'name': 'Idler width', 'type': 'float', 'value': 20, 'limits': [1, 20], 'step':0.1, 'suffix': 'nm'},
-        ]
-        self.filters_params_top = Parameter.create(name = 'filters_params', type = 'group', children = filters_params)
-        self.filters_tree.setParameters(self.filters_params_top, showTop=False)
-        
-        #
-        # Parameters for experiment statistics
-        #
-        exp_stat_params = [
-            {'name': 'Signal heralding efficiency', 'type': 'float', 'readonly': True, 'suffix': '%'},
-            {'name': 'Idler heralding efficiency', 'type': 'float', 'readonly': True, 'suffix': '%'},
-            {'name': 'Pair-symmetric heralding efficiency', 'type': 'float', 'readonly': True, 'suffix': '%'},
-            {'name': 'Purity', 'type': 'float', 'readonly': True, 'suffix': '%'},
-            {'name': 'Poling period', 'type': 'float', 'readonly': True, 'suffix':'μm'}
-        ]
-        self.exp_stat_params_top = Parameter.create(name = 'exp_stat_params', type = 'group', children = exp_stat_params)
-        self.experiment_statistics_tree.setParameters(self.exp_stat_params_top, showTop=False)
-        
-        #
-        # ROI for filters
-        #
-        self.jsa_roi = pqg.RectROI((0,0),(1000,1000))
         
         #
         #Threads and workers
@@ -158,7 +25,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.threadpool = QThreadPool()
         
         #
-        # Plots
+        # Initial Plots
         #
         self.set_pyjsa_objects()
         
@@ -177,6 +44,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.waveguide_params_top.children()[4].sigStateChanged.connect(self.plot_waveguide_profile)
         self.actionSave_As.triggered.connect(self.save_config_as)
         self.actionOpen.triggered.connect(self.open_config)
+        
+        self.actionTwo_photon_selector.triggered.connect(self.open_two_photon_selector)
         
     def process_result(self, result):
         self.pef = result[0]
@@ -203,7 +72,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         #experiment variables
         self.signal = [self.signal_edit.value()*1e-9, 20e-9]
         self.idler = [self.idler_edit.value()*1e-9, 20e-9]
-        SPDC_type = self.process_type.value()
         
         #filter variables
         filter_signal_center = self.filters_params_top.children()[0].value()*1e-9
@@ -211,25 +79,30 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         filter_idler_center = self.filters_params_top.children()[2].value()*1e-9
         filter_idler_width = self.filters_params_top.children()[3].value()*1e-9
         
+        filters = [filter_signal_width, filter_idler_width, filter_signal_center, filter_idler_center]
+        
         #pyjsa objects
         self.waveguide = Waveguide(thickness, width, height, length, profile=profile)
         self.pump = Pump(width_pump)
-        self.experiment = Experiment(self.waveguide, self.pump, self.signal, self.idler, SPDC_type=SPDC_type)
-        """self.pef = self.experiment.pump.pump_envelope_function()
-        self.pmf = self.experiment.pmf
-        self.jsa, self.signal_passes, self.idler_passes, self.both_pass = self.experiment.joint_spectral_amplitude(filter_signal_width=filter_signal_width, filter_signal_center=filter_signal_center,
-                                                                                                    filter_idler_center=filter_idler_center, filter_idler_width=filter_idler_width)
-        self.s_values, self.purity = self.experiment.schmidt_decomposition(filter_signal_width=filter_signal_width, filter_signal_center=filter_signal_center,
-                                                                filter_idler_center=filter_idler_center, filter_idler_width=filter_idler_width)"""
+        self.experiment = Experiment(self.waveguide, 
+                                     self.pump, 
+                                     self.signal, 
+                                     self.idler, 
+                                     self.signal_pol_selector.currentText(),
+                                     self.idler_pol_selector.currentText(),
+                                     self.pump_pol_selector.currentText())
         
-        self.pyjsa_worker = Worker(self.experiment, filter_signal_width, filter_signal_center, filter_idler_width, filter_idler_center)
+        self.pyjsa_worker = WorkerExperiment(self.experiment, filters)
         self.pyjsa_worker.signals.progress.connect(self.progress.setValue)
         self.pyjsa_worker.signals.result.connect(self.process_result)
         self.pyjsa_worker.signals.finished.connect(self.refresh_plots)
         self.progress.setVisible(True)
         self.threadpool.start(self.pyjsa_worker)
         
-        
+    #
+    # Slots
+    #  
+     
     def refresh_plots(self):
         self.progress.setVisible(False)
         self.reset_filters()
@@ -331,10 +204,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.exp_stat_params_top.children()[3].setValue(self.purity*100)
         self.exp_stat_params_top.children()[4].setValue(self.experiment.poling_period*1e6)
     
-    
-    #
-    # Slots
-    #
     def film_thickness_changed(self):
         if self.waveguide_params_top.children()[2].value() >= self.waveguide_params_top.children()[0].value():
             self.waveguide_params_top.children()[2].setValue(self.waveguide_params_top.children()[0].value()-0.1)
@@ -346,11 +215,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def filters_changed_roi(self):
         if self.tab_jsa.currentIndex() == 0:
             scale = 20/1000
+            
             filter_signal_width = self.jsa_roi.size()[0]*scale
             filter_signal_center = (self.jsa_roi.pos()[0]+self.jsa_roi.size()[0]/2)*scale
-            
             filter_idler_width = self.jsa_roi.size()[1]*scale
             filter_idler_center = (self.jsa_roi.pos()[1]+self.jsa_roi.size()[1]/2)*scale
+            filters = [filter_signal_width*1e-9, filter_idler_width*1e-9, filter_signal_center*1e-9, filter_idler_center*1e-9]
             
             self.filters_params_top.children()[0].setValue(filter_signal_center)
             self.filters_params_top.children()[1].setValue(filter_signal_width)
@@ -358,10 +228,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.filters_params_top.children()[3].setValue(filter_idler_width)
             
             #update schmidt values and experiment statistics
-            self.jsa, signal_passes, idler_passes, both_pass = self.experiment.joint_spectral_amplitude(filter_signal_width=filter_signal_width*1e-9, filter_signal_center=filter_signal_center*1e-9,
-                                                                                                        filter_idler_center=filter_idler_center*1e-9, filter_idler_width=filter_idler_width*1e-9)
-            s_values, purity = self.experiment.schmidt_decomposition(filter_signal_width=filter_signal_width*1e-9, filter_signal_center=filter_signal_center*1e-9,
-                                                                    filter_idler_center=filter_idler_center*1e-9, filter_idler_width=filter_idler_width*1e-9)
+            self.jsa, signal_passes, idler_passes, both_pass = self.experiment.joint_spectral_amplitude(filters)
+            s_values, purity = self.experiment.schmidt_decomposition(filters)
             
             bar_schmidt = pqg.BarGraphItem(x = range(20), height = s_values[:20], width = 0.5)
             self.schmidt_plot.clear()
@@ -378,19 +246,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
     def filters_changed_tree(self):
         if self.tab_jsa.currentIndex() == 1:
             scale = 20/1000
+            
             filter_signal_center = self.filters_params_top.children()[0].value()
             filter_signal_width = self.filters_params_top.children()[1].value()
             filter_idler_center = self.filters_params_top.children()[2].value()
             filter_idler_width = self.filters_params_top.children()[3].value()
+            filters = [filter_signal_width*1e-9, filter_idler_width*1e-9, filter_signal_center*1e-9, filter_idler_center*1e-9]
             
             self.jsa_roi.setSize((filter_signal_width/scale, filter_idler_width/scale))
             self.jsa_roi.setPos(((filter_signal_center-filter_signal_width/2)/scale, (filter_idler_center-filter_idler_width/2)/scale))
             
             #update schmidt values and experiment statistics
-            self.jsa, signal_passes, idler_passes, both_pass = self.experiment.joint_spectral_amplitude(filter_signal_width=filter_signal_width*1e-9, filter_signal_center=filter_signal_center*1e-9,
-                                                                                                        filter_idler_center=filter_idler_center*1e-9, filter_idler_width=filter_idler_width*1e-9)
-            s_values, purity = self.experiment.schmidt_decomposition(filter_signal_width=filter_signal_width*1e-9, filter_signal_center=filter_signal_center*1e-9,
-                                                                    filter_idler_center=filter_idler_center*1e-9, filter_idler_width=filter_idler_width*1e-9)
+            self.jsa, signal_passes, idler_passes, both_pass = self.experiment.joint_spectral_amplitude(filters)
+            s_values, purity = self.experiment.schmidt_decomposition(filters)
             
             bar_schmidt = pqg.BarGraphItem(x = range(20), height = s_values[:20], width = 0.5)
             self.schmidt_plot.clear()
@@ -420,19 +288,17 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         filter_signal_width = self.filters_params_top.children()[1].value()
         filter_idler_center = self.filters_params_top.children()[2].value()
         filter_idler_width = self.filters_params_top.children()[3].value()
+        filters = [filter_signal_width*1e-9, filter_idler_width*1e-9, filter_signal_center*1e-9, filter_idler_center*1e-9]
         
-        res = find_optimal_pump_width(self.experiment, [0.1, 10], filter_signal_width=filter_signal_width*1e-9, filter_signal_center=filter_signal_center*1e-9,
-                                                                    filter_idler_center=filter_idler_center*1e-9, filter_idler_width=filter_idler_width*1e-9)
+        res = find_optimal_pump_width(self.experiment, [0.1, 10], filters)
         self.experiment.pump.width = res.x*1e-9
         self.pump_params_top.children()[1].setValue(res.x)
         
         #update pump, jsa and schmidt plots
         
         self.pef = self.experiment.pump.pump_envelope_function()
-        self.jsa, signal_passes, idler_passes, both_pass = self.experiment.joint_spectral_amplitude(filter_signal_width=filter_signal_width*1e-9, filter_signal_center=filter_signal_center*1e-9,
-                                                                                                    filter_idler_center=filter_idler_center*1e-9, filter_idler_width=filter_idler_width*1e-9)
-        s_values, purity = self.experiment.schmidt_decomposition(filter_signal_width=filter_signal_width*1e-9, filter_signal_center=filter_signal_center*1e-9,
-                                                                filter_idler_center=filter_idler_center*1e-9, filter_idler_width=filter_idler_width*1e-9)
+        self.jsa, signal_passes, idler_passes, both_pass = self.experiment.joint_spectral_amplitude(filters)
+        s_values, purity = self.experiment.schmidt_decomposition(filters)
         
         signal = [self.signal_edit.value()*1e-9, 20e-9]
         idler = [self.signal_edit.value()*1e-9, 20e-9]
@@ -521,7 +387,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             config = ConfigParser()
             config.read(path)
             #Process
-            self.process_type.setValue(config['Process'].getint('spdc_type'))
+            self.signal_pol_selector.setCurrentText(config['Process'].get('signal_pol'))
+            self.idler_pol_selector.setCurrentText(config['Process'].get('idler_pol'))
+            self.pump_pol_selector.setCurrentText(config['Process'].get('pump_pol'))
             self.signal_edit.setValue(config['Process'].getfloat('signal'))
             self.idler_edit.setValue(config['Process'].getfloat('idler'))
             #Pump
@@ -557,7 +425,9 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if path != '':
             config = ConfigParser()
             config['Process'] = {
-                'spdc_type': str(self.process_type.value()),
+                'signal_pol': str(self.signal_pol_selector.currentText()),
+                'idler_pol': str(self.idler_pol_selector.currentText()),
+                'pump_pol': str(self.pump_pol_selector.currentText()),
                 'signal': str(self.signal_edit.value()),
                 'idler': str(self.idler_edit.value()),
             }
@@ -587,3 +457,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             }
             with open(path, 'w') as configfile:
                 config.write(configfile)
+                
+    def open_two_photon_selector(self):
+        self.two_photon_selector_dialog = QDialog()
+        self.Ui_twophotonselectordialog = TwoPhotonSelectorDialog()
+        self.Ui_twophotonselectordialog.setupUi(self.two_photon_selector_dialog)
+        self.two_photon_selector_dialog.exec()
+        pass

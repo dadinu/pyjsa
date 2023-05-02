@@ -209,6 +209,7 @@ class Waveguide():
         self._neff_TE = interp1d(wls_TE, self._neff_TE, bounds_error=False, fill_value="extrapolate", kind = "linear")
         self._neff_TM = interp1d(wls_TM, self._neff_TM, bounds_error=False, fill_value="extrapolate", kind = "linear")
         
+    #TODO: remove neff properties
     @property
     def neff_TE(self):
         """callable: Dispersion relation for TE polarization, of the form neff_TE(wavelength in micrometers).
@@ -261,6 +262,13 @@ class Waveguide():
     def custom_nonlinearity_profile(self, value):
         self._custom_nonlinearity_profile = value        
 
+    def n_eff(self, pol: str):
+        assert pol in ["TE", "TM"]
+        if pol == "TE":
+            return self._neff_TE
+        if pol == "TM":
+            return self._neff_TM
+    
     def g(self, poling_period = None):
         """A function that returns the poling profile or nonlinearity profile of the waveguide, depending on the profile attribute of the class.
 
