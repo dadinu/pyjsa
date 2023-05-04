@@ -60,17 +60,20 @@ class Experiment():
         The type of the SPDC process. Can only be 0, 1 or 2, by default 0.
     """
     
-    def __init__(self, waveguide:Waveguide, pump:Pump, signal, idler, SPDC_type = 0) -> None:
+    def __init__(self, waveguide:Waveguide, pump:Pump, signal, idler, pol_signal, pol_idler, pol_pump, pmf_callback = None) -> None:
         self._waveguide = waveguide
         self._pump = pump
         self._pmf = None
         self._poling_period = None
         self._delta_k = None
+        self._pmf_callback = pmf_callback
         
         self._pump.signal = signal
         self._pump.idler = idler
         
-        self._SPDC_type = SPDC_type
+        self._pol_pump = pol_pump
+        self._pol_idler = pol_idler
+        self._pol_signal = pol_signal
         
     @property
     def pump(self):
@@ -110,15 +113,8 @@ class Experiment():
         """float: The poling period for the specified process, signal and idler combination. Cannot be set.
         """
         if type(self._poling_period) == type(None):
-            if self.SPDC_type == 0:
-                self._poling_period = _compute_poling_period(self._pump.signal[0], self._pump.idler[0], 
-                                                            self._waveguide.neff_TE, self._waveguide.neff_TE, self._waveguide.neff_TE)
-            if self.SPDC_type == 1:
-                self._poling_period = _compute_poling_period(self._pump.signal[0], self._pump.idler[0], 
-                                                   self._waveguide.neff_TM, self._waveguide.neff_TE, self._waveguide.neff_TE)
-            if self.SPDC_type == 2:
-                self._poling_period = _compute_poling_period(self._pump.signal[0], self._pump.idler[0], 
-                                                   self._waveguide.neff_TM, self._waveguide.neff_TE, self._waveguide.neff_TM)
+            self._poling_period = _compute_poling_period(self._pump.signal[0], self._pump.idler[0], 
+                                                        self._waveguide.n_eff(self._pol_signal), self._waveguide.n_eff(self._pol_idler), self._waveguide.n_eff(self._pol_pump))
         return self._poling_period
     
     @property
@@ -127,23 +123,44 @@ class Experiment():
         """
         if type(self._delta_k) == type(None):
             _signal_range, _idler_range = np.meshgrid(*self.pump.signal_idler_ranges())
-            if self.SPDC_type == 0:
-                self._delta_k = _compute_delta_k(_signal_range, _idler_range, self._waveguide.neff_TE, self._waveguide.neff_TE, self._waveguide.neff_TE)
-            if self.SPDC_type == 1:
-                self._delta_k = _compute_delta_k(_signal_range, _idler_range, self._waveguide.neff_TM, self._waveguide.neff_TE, self._waveguide.neff_TE)
-            if self.SPDC_type == 2:
-                self._delta_k = _compute_delta_k(_signal_range, _idler_range, self._waveguide.neff_TM, self._waveguide.neff_TE, self._waveguide.neff_TM)
+            self._delta_k = _compute_delta_k(_signal_range, 
+                                             _idler_range, 
+                                             self._waveguide.n_eff(self._pol_signal), 
+                                             self._waveguide.n_eff(self._pol_idler), 
+                                             self._waveguide.n_eff(self._pol_pump))
         return self._delta_k
     
     @property
-    def SPDC_type(self):
-        """int: The SPDC type.
-        """
-        return self._SPDC_type
+    def pol_signal(self):
+        return self._pol_signal
     
-    @SPDC_type.setter
-    def SPDC_type(self, this_SPDC_type):
-        self._SPDC_type = this_SPDC_type
+    @pol_signal.setter
+    def pol_signal(self, value):
+        self._pol_signal = value
+        
+    @property
+    def pol_idler(self):
+        return self._pol_idler
+    
+    @pol_idler.setter
+    def pol_idler(self, value):
+        self._pol_idler = value
+    
+    @property
+    def pol_pump(self):
+        return self._pol_pump
+    
+    @pol_pump.setter
+    def pol_pump(self, value):
+        self._pol_pump = value
+        
+    @property
+    def pmf_callback(self):
+        return self._pmf_callback
+    
+    @pmf_callback.setter
+    def pmf_callback(self, value):
+        self._pmf_callback = value
         
     def phase_matching_function(self, points = 10000):
         """A function that computed the PMF for the specified signal, idler ranges and waveguide poling profile.
@@ -163,9 +180,13 @@ class Experiment():
             _dz = self.poling_period/2
             _w = np.exp(1j*(self.delta_k)*_dz)
             _factor = 1
-            for gm in tqdm(self.waveguide.g(self.poling_period)):
+            _index = 0
+            _iter = tqdm(self.waveguide.g(self.poling_period))
+            for gm in _iter:
                 PMF += gm*_factor
                 _factor = _factor*_w
+                _index += 1
+                if self.pmf_callback != None: self.pmf_callback(int((_iter.n+1)/_iter.total*100))
                 
             PMF = PMF/(1j*self.delta_k)*(np.exp(1j*self.delta_k*_dz)-1)
             
@@ -201,8 +222,8 @@ class Experiment():
             PMF = PMF*_dz*_w**(1/2)*np.sinc((self.delta_k-2*np.pi/self.poling_period)*_dz/2)
         
         return PMF
-
-    def joint_spectral_amplitude(self, filter_signal_width, filter_idler_width, filter_signal_center, filter_idler_center):
+    #filters = (filter_signal_width, filter_idler_width, filter_signal_center, filter_idler_center)
+    def joint_spectral_amplitude(self, filters):
         """A function that computes the JSA for the specified waveguide, pump and signal and idler ranges combination, incorporating filtering, For no filtering, you should set the center and width of the filters to those of the signal and idler 
 
         Parameters
@@ -228,8 +249,8 @@ class Experiment():
             Probability that both the signal and the idler pass their filters.
         """
         _signal_range, _idler_range = self.pump.signal_idler_ranges()
-        _filter_signal = rect(_signal_range, filter_signal_center, filter_signal_width)
-        _filter_idler = rect(_idler_range, filter_idler_center, filter_idler_width)
+        _filter_signal = rect(_signal_range, filters[2], filters[0])
+        _filter_idler = rect(_idler_range, filters[3], filters[1])
         _filter_idler, _filter_signal = np.meshgrid(_filter_idler, _filter_signal)
         _filter = _filter_signal*_filter_idler
         _signal_grad, _idler_grad = np.meshgrid(np.gradient(_signal_range), np.gradient(_idler_range))
@@ -242,7 +263,7 @@ class Experiment():
         p_both_pass = np.sum(_signal_grad*_idler_grad*np.abs(jsa)**2*np.abs(_filter))
         return jsa*_filter, p_signal_passes, p_idler_passes, p_both_pass
 
-    def schmidt_decomposition(self, filter_signal_width, filter_idler_width, filter_signal_center, filter_idler_center):
+    def schmidt_decomposition(self, filters):
         """A function that computes the Schmidt decomposition of the JSA.
 
         Parameters
@@ -263,13 +284,13 @@ class Experiment():
         float
             The spectral purity of the output photons.
         """
-        _jsa, _, _, _ = self.joint_spectral_amplitude(filter_signal_width, filter_idler_width, filter_signal_center, filter_idler_center)
+        _jsa, _, _, _ = self.joint_spectral_amplitude(filters)
         U, _values, V = np.linalg.svd(_jsa)
         _values = _values/np.sqrt(np.sum(_values**2))
         _purity = np.sum(_values**4)
         return _values, _purity
 
-def find_optimal_pump_width(exp:Experiment, width_bounds, filter_signal_width, filter_idler_width, filter_signal_center, filter_idler_center):
+def find_optimal_pump_width(exp:Experiment, width_bounds, filters):
     """A function that optimizes the width of the pump of an experiment such that it yields the highest spectral purity. It uses the default optimizer of scipy.optimize.minimize_scalar.
 
     Parameters
@@ -295,7 +316,7 @@ def find_optimal_pump_width(exp:Experiment, width_bounds, filter_signal_width, f
     
     def _impurity(w):
         exp.pump.width = w*1e-9
-        _, purity = exp.schmidt_decomposition(filter_signal_width, filter_idler_width, filter_signal_center, filter_idler_center)
+        _, purity = exp.schmidt_decomposition(filters)
         return 1-purity
     
     res = minimize_scalar(_impurity, method="bounded", bounds=width_bounds)
