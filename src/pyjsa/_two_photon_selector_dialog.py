@@ -7,6 +7,28 @@ import pyqtgraph as pqg
 import cv2
 import numpy as np
 from scipy.signal import find_peaks
+from scipy.fft import fft, fftfreq
+
+def firstTwoPeaks(array):
+    peaks, _ = find_peaks(array)
+    peakValues = array[peaks]
+    peak1 = np.argmax(peakValues)
+    peakValues[peak1] = 0
+    peak2 = np.argmax(peakValues)
+    return peaks[peak1], peaks[peak2]
+    
+def boundingBox(array):
+    peak1, peak2 = firstTwoPeaks(array)
+    peak1p, peak2p = firstTwoPeaks(-array)
+    return (min(peak1, peak2), max(peak1p, peak2p))
+
+def cropImage(img):
+    summedImg = np.sum(img, axis = 1)
+    gradSummedImg = np.gradient(summedImg)
+    y1, y2 = boundingBox(gradSummedImg)
+    croppedImage = img[y1:y2, :img.shape[1]]
+    #return electrodes, poledRegion
+    return croppedImage[:int(2/7*croppedImage.shape[0]),:img.shape[1]], croppedImage[int(2/7*croppedImage.shape[0]):int(5/7*croppedImage.shape[0]),:img.shape[1]]
 
 class TwoPhotonSelectorDialog(Ui_TwoPhotonSelectorDialog):
     def setupUi(self, Dialog: QDialog):
@@ -56,7 +78,7 @@ class TwoPhotonSelectorDialog(Ui_TwoPhotonSelectorDialog):
         self.two_photon_image.addItem(self.img_item)
         
         if opened:
-            self.two_photon_roi = pqg.RectROI((0,500), (self.img_array.shape[1], 20), 
+            self.two_photon_roi = pqg.RectROI((0,int(self.img.shape[0]/2)), (self.img_array.shape[1], 20), 
                                               resizable = True,
                                               rotatable = False,
                                               scaleSnap = True,
@@ -79,7 +101,6 @@ class TwoPhotonSelectorDialog(Ui_TwoPhotonSelectorDialog):
         self.peaks_plot.getPlotItem().plot(self.summed_image)
         self.peaks_pos, self.peaks_prop = find_peaks(self.summed_image, self.slider_peak_height.value())
         self.peaks_plot.getPlotItem().plot(self.peaks_pos, self.peaks_prop['peak_heights'], pen = None, symbol = 'd')
-        
         self.domain_widths = np.gradient(self.peaks_pos)
         self.profile_plot.clear()
         self.profile_plot.getPlotItem().plot(self.domain_widths)
@@ -88,10 +109,11 @@ class TwoPhotonSelectorDialog(Ui_TwoPhotonSelectorDialog):
         file_dialog = QFileDialog()
         self.path = file_dialog.getOpenFileName()[0]
         self.img = cv2.imread(self.path)
+        self.img = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+        self.electrodes, self.img = cropImage(self.img)
         
         #binarize
-        self.bin_img = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
-        _, self.bin_img = cv2.threshold(self.bin_img, self.bin_threshold_slider.value(), 255,cv2.THRESH_BINARY)
+        _, self.bin_img = cv2.threshold(self.img, self.bin_threshold_slider.value(), 255,cv2.THRESH_BINARY)
         
         self.refresh_plots(self.img, opened=True)
         self.two_photon_roi.sigRegionChanged.connect(self.on_roi_changed)
@@ -110,9 +132,18 @@ class TwoPhotonSelectorDialog(Ui_TwoPhotonSelectorDialog):
         
         self.spinBoxScale.valueChanged.connect(self.onScaleChanged)
         
+        #get scale from electrodes
+        sumElectrodes = np.sum(self.electrodes, axis = 0)
+        sumElectrodes = sumElectrodes-np.average(sumElectrodes)
+        fftElectrodes = np.abs(fft(sumElectrodes))
+        fftElectrodesFreq = fftfreq(len(sumElectrodes))
+        maxFreq = fftElectrodesFreq[np.argmax(fftElectrodes)] #the 1/distance between electrodes in pixels
+        print(1/maxFreq)
+        self.spinBoxScale.setValue(np.abs(1/maxFreq))
+        
+        
     def on_bin_slider_moved(self):
-        self.bin_img = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
-        _, self.bin_img = cv2.threshold(self.bin_img, self.bin_threshold_slider.value(), 255, cv2.THRESH_BINARY)
+        _, self.bin_img = cv2.threshold(self.img, self.bin_threshold_slider.value(), 255, cv2.THRESH_BINARY)
         
         self.refresh_plots(self.bin_img)
         self.refresh_peak_analysis()
@@ -120,6 +151,8 @@ class TwoPhotonSelectorDialog(Ui_TwoPhotonSelectorDialog):
     def onScaleChanged(self):
         self.spinBoxWidth.setValue(self.two_photon_roi.size()[1]*self.spinBoxScale.value())
         self.spinBoxLength.setValue(self.two_photon_roi.size()[0]*self.spinBoxScale.value()*1e-3)
+        
+    
         
     
         
