@@ -4,8 +4,11 @@ setup.cfg
 setup.py
 src/pyjsa/__init__.py
 src/pyjsa/_main_window.py
+src/pyjsa/_two_photon_selector_dialog.py
+src/pyjsa/_workers.py
 src/pyjsa/experiment.py
 src/pyjsa/gui.py
+src/pyjsa/modes.py
 src/pyjsa/pump.py
 src/pyjsa/waveguide.py
 src/pyjsa.egg-info/PKG-INFO
@@ -15,6 +18,9 @@ src/pyjsa.egg-info/requires.txt
 src/pyjsa.egg-info/top_level.txt
 src/pyjsa/assets/__init__.py
 src/pyjsa/assets/ui/Ui_main_window.py
+src/pyjsa/assets/ui/Ui_main_window_graph.py
+src/pyjsa/assets/ui/Ui_main_window_test.py
+src/pyjsa/assets/ui/Ui_two_photon_selector_dialog.py
 src/pyjsa/assets/ui/__init__.py
 src/pyjsa/assets/ui/icons_rc.py
 src/pyjsa/data/LNOI_Neff_Library_X_cut_film_thickness_0.3_cladding_air_angle_60_TE.npz
